@@ -13,7 +13,6 @@ router.get('/join', (req, res) => {
 });
 
 router.get('/', (req, res) => {
-  console.log(req.user);
   res.render('main', {
     title: 'Pomp',
   });
