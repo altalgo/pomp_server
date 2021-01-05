@@ -12,7 +12,8 @@ router.get('/join', (req, res) => {
   res.render('join', { title: '회원가입 - Pomp' });
 });
 
-router.get('/', (req, res, next) => {
+router.get('/', (req, res) => {
+  console.log(req.user);
   res.render('main', {
     title: 'Pomp',
   });

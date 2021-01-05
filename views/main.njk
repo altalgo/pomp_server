@@ -1,7 +1,9 @@
-{% extends 'layout.njk' %}
-
-  {% block content %}
-  <div class="timeline">
-    <div>Main Page</div>
-  </div>
-  {% endblock %}
+{% extends 'layout.njk' %} {% block content %} {% if user and user.id %}
+<div class="timeline">
+  <div>Logined Page</div>
+</div>
+{% else %}
+<div class="timeline">
+  <div>Main Page</div>
+</div>
+{% endif %} {% endblock %}

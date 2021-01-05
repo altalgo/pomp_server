@@ -33,7 +33,6 @@ router.post('/login', isNotLoggedIn, (req, res, next) => {
       return next(authError);
     }
     if (!user) {
-      console.log(info.message);
       return res.redirect(`/?loginError=${info.message}`);
     }
     return req.login(user, (loginError) => {
@@ -42,16 +41,17 @@ router.post('/login', isNotLoggedIn, (req, res, next) => {
         return next(loginError);
       }
       // 세션 쿠키를 브라우저로 보낸다.
-      return res.redirect('/');
+      return res.redirect('http://localhost:8001', 301);
     });
   })(req, res, next); // 미들웨어 내의 미들웨어에는 (req, res, next)를 붙입니다.
 });
 
 router.get('/logout', isLoggedIn, (req, res) => {
   req.logout();
-  req.session.destroy();
   res.clearCookie('connect.sid');
-  res.redirect('/');
+  req.session.destroy(() => {
+    res.redirect('/');
+  });
 });
 
 module.exports = router;

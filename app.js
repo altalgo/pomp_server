@@ -11,51 +11,55 @@ const SequelizeStore = require('connect-session-sequelize')(session.Store);
 dotenv.config();
 const pageRouter = require('./routes/page');
 const authRouter = require('./routes/auth');
-
 const { sequelize } = require('./models');
 const passportConfig = require('./passport');
-const { destroy } = require('./models/user');
 
 const app = express();
 passportConfig(); // 패스포트 설정
 app.set('port', process.env.PORT || 8001);
+app.set('etag', false);
 
 // 프론트는 넌적스 활용
-app.set('view engine', 'njk');
+app.set('view engine', 'html');
 nunjucks.configure('views', {
   express: app,
   watch: true,
 });
+
 // 시퀄라이즈 연결
-sequelize
-  .sync({ force: false })
-  .then(() => {
-    console.log('데이터베이스 연결 성공');
-  })
-  .catch((err) => {
-    console.error(err);
-  });
+// sequelize
+//   .sync({ force: false })
+//   .then(() => {
+//     console.log('데이터베이스 연결 성공');
+//   })
+//   .catch((err) => {
+//     console.error(err);
+//   });
+
+const myStore = new SequelizeStore({
+  db: sequelize,
+  checkExpirationInterval: 15 * 60 * 1000,
+  expiration: 7 * 24 * 60 * 60 * 1000,
+});
 
 app.use(morgan('dev'));
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'public'), { etag: false }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser(process.env.COOKIE_SECRET));
 app.use(
   session({
-    resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false,
     secret: process.env.COOKIE_SECRET,
     cookie: {
       httpOnly: true,
       secure: false,
     },
-    store: new SequelizeStore({
-      db: sequelize,
-    }),
-    unset: 'destroy',
+    store: myStore,
+    resave: false,
   })
 );
+myStore.sync();
 app.use(passport.initialize());
 app.use(passport.session());
 
