@@ -1,0 +1,39 @@
+{
+  "name": "pomp_server",
+  "version": "1.0.0",
+  "description": "Backend server of pomp",
+  "main": "app.js",
+  "scripts": {
+    "start": "nodemon app"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/altalgo/pomp_server.git"
+  },
+  "author": "Junek3",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/altalgo/pomp_server/issues"
+  },
+  "homepage": "https://github.com/altalgo/pomp_server#readme",
+  "dependencies": {
+    "bcrypt": "^5.0.0",
+    "connect-session-sequelize": "^7.0.4",
+    "cookie-parser": "^1.4.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "express-mysql-session": "^2.1.5",
+    "express-session": "^1.17.1",
+    "morgan": "^1.10.0",
+    "mysql": "^2.18.1",
+    "mysql2": "^2.2.5",
+    "nunjucks": "^3.2.2",
+    "passport": "^0.4.1",
+    "passport-local": "^1.0.0",
+    "sequelize": "^6.3.5",
+    "sequelize-cli": "^6.2.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.6"
+  }
+}
