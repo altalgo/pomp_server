@@ -41,7 +41,12 @@ router.post('/login', isNotLoggedIn, (req, res, next) => {
         return next(loginError);
       } else {
         // 세션 쿠키를 브라우저로 보낸다.
-        res.redirect('/');
+        req.session.save((err) => {
+          if (err) {
+            console.log(err);
+          }
+          res.redirect('/');
+        });
       }
     });
   })(req, res, next); // 미들웨어 내의 미들웨어에는 (req, res, next)를 붙입니다.
