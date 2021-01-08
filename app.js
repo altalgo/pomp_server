@@ -10,7 +10,7 @@ const passport = require('passport');
 const SequelizeStore = require('connect-session-sequelize')(session.Store);
 
 dotenv.config();
-const pageRouter = require('./routes/page');
+// const pageRouter = require('./routes/page');
 const authRouter = require('./routes/auth');
 const formRouter = require('./routes/forms');
 const { sequelize } = require('./models');
@@ -19,7 +19,7 @@ const passportConfig = require('./passport');
 const app = express();
 app.use(cors());
 passportConfig(); // 패스포트 설정
-app.set('port', process.env.PORT || 8001);
+app.set('port', process.env.PORT || 8080);
 
 // 프론트는 넌적스 활용
 app.set('view engine', 'njk');
@@ -41,7 +41,7 @@ nunjucks.configure('views', {
 const sessionStore = new SequelizeStore({
   db: sequelize,
 });
-sessionStore.sync();
+sessionStore.sync({ force: true });
 
 app.use(morgan('dev'));
 app.use(express.static(path.join(__dirname, 'public')));
@@ -63,8 +63,8 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use('/', pageRouter);
-app.use('/auth', authRouter);
+// app.use('/', pageRouter);
+app.use('/api/auth', authRouter);
 app.use('/forms', formRouter);
 
 app.use((req, res, next) => {
