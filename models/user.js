@@ -12,7 +12,7 @@ module.exports = class User extends (
           unique: true,
         },
         nick: {
-          type: Sequelize.STRING(15),
+          type: Sequelize.STRING(40),
           allowNull: false,
         },
         password: {

@@ -35,7 +35,7 @@ router.post('/login', isNotLoggedIn, (req, res, next) => {
     if (!user) {
       return res.json({
         loginSuccess: false,
-        error: info.message
+        error: info.message,
       });
     }
     return req.login(user, (loginError) => {
@@ -48,7 +48,7 @@ router.post('/login', isNotLoggedIn, (req, res, next) => {
           if (err) {
             console.log(err);
           }
-          return res.json({loginSuccess: true});
+          return res.json({ loginSuccess: true });
         });
       }
     });
@@ -59,25 +59,40 @@ router.get('/logout', isLoggedIn, (req, res) => {
   req.logout();
   res.clearCookie('connect.sid');
   req.session.destroy(() => {
-    res.json({logoutSuccess: true});
+    res.json({ logoutSuccess: true });
   });
 });
 
 router.get('/user', (req, res) => {
+  console.log(req.user);
   if (req.user) {
-    return res.json({ isAuth: true });
+    return res.json({ username: req.user.nick, isAuth: true });
   }
   return res.json({ isAuth: false });
 });
 
 router.get('/kakao', passport.authenticate('kakao'));
-router.get('/kakao/callback', passport.authenticate('kakao', {
+router.get(
+  '/kakao/callback',
+  passport.authenticate('kakao', {
     failureRedirect: '/',
-  }), (req, res) => {
-    return res.json({loginSuccess: true});
-  });
+  }),
+  (req, res) => {
+    return res.json({ loginSuccess: true });
+  }
+);
+router.get(
+  '/google',
+  passport.authenticate('google', { scope: ['profile', 'email'] })
+);
+router.get(
+  '/google/callback',
+  passport.authenticate('google', {
+    failureRedirect: '/',
+  }),
+  (req, res) => {
+    return res.json({ loginSuccess: true });
+  }
+);
 
-router.post('/google', (req, res)=>{
-  
-})
 module.exports = router;
