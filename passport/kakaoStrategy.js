@@ -4,29 +4,42 @@ const KakaoStrategy = require('passport-kakao').Strategy;
 const User = require('../models/user');
 
 module.exports = () => {
-  passport.use(new KakaoStrategy({
-    clientID: process.env.KAKAO_ID,
-    callbackURL: '/api/auth/kakao/callback',
-  }, async (accessToken, refreshToken, profile, done) => {
-    console.log('kakao profile', profile);
-    try {
-      const exUser = await User.findOne({
-        where: { snsId: profile.id, provider: 'kakao' },
-      });
-      if (exUser) {
-        done(null, exUser);
-      } else {
-        const newUser = await User.create({
-          email: profile._json.kakao_account.email,
-          nick: profile.displayName,
-          snsId: profile.id,
-          provider: 'kakao',
-        });
-        done(null, newUser);
+  passport.use(
+    new KakaoStrategy(
+      {
+        clientID: process.env.KAKAO_ID,
+        callbackURL: '/api/auth/kakao/callback',
+      },
+      async (accessToken, refreshToken, profile, done) => {
+        console.log('kakao profile', profile);
+        try {
+          const exUser = await User.findOne({
+            where: { snsId: profile.id, provider: 'kakao' },
+          });
+          if (exUser) {
+            done(null, exUser);
+          } else {
+            const sameEmailUser = await User.findOne({
+              where: { email: profile._json.kakao_account.email },
+            });
+            if (sameEmailUser) {
+              // 카카오로 가입하진 않았지만 local or 구글 계정이
+              // 동일한 이메일로 존재해서 그냥 로그인 시켜줌
+              // done(null, sameEmailUser);
+            }
+            const newUser = await User.create({
+              email: profile._json.kakao_account.email,
+              nick: profile.displayName,
+              snsId: profile.id,
+              provider: 'kakao',
+            });
+            done(null, newUser);
+          }
+        } catch (error) {
+          console.error(error);
+          done(error);
+        }
       }
-    } catch (error) {
-      console.error(error);
-      done(error);
-    }
-  }));
+    )
+  );
 };

@@ -1,9 +1,11 @@
 const express = require('express');
 
 const router = express.Router();
-router.use('/',(req,res)=>{
-  res.send('로그인 성공')
-})
+
+router.get('/', (req, res) => {
+  res.redirect('http://localhost:3000/forms');
+});
+
 router.post('/upload', (req, res) => {
   console.log(req.body);
 });
