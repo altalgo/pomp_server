@@ -51,9 +51,61 @@ router.get('/view', async (req, res) => {
 });
 
 router.get('/view/:id', async (req, res) => {
-  const form = await Form.findOne({ where: { id: req.params.id } });
+  const form = await Form.findOne({
+    where: { id: req.params.id, userId: req.user.id },
+  });
   console.log(form);
-  return res.json({ form });
+  if (form) return res.json({ form });
+  else {
+    return res.json({
+      form: {
+        data: [
+          {
+            type: -1,
+            title: '잘못된 접근입니다',
+          },
+        ],
+      },
+    });
+  }
 });
 
 module.exports = router;
+
+// Form {
+//   dataValues: {
+//     id: 16,
+//     session: 'hihi',
+//     data: [ [Object], [Object], [Object], [Object], [Object], [Object] ],
+//     createdAt: 2021-01-10T07:34:29.000Z,
+//     updatedAt: 2021-01-10T07:34:29.000Z,
+//     deletedAt: null,
+//     UserId: 15
+//   },
+//   _previousDataValues: {
+//     id: 16,
+//     session: 'hihi',
+//     data: [ [Object], [Object], [Object], [Object], [Object], [Object] ],
+//     createdAt: 2021-01-10T07:34:29.000Z,
+//     updatedAt: 2021-01-10T07:34:29.000Z,
+//     deletedAt: null,
+//     UserId: 15
+//   },
+//   _changed: Set {},
+//   _options: {
+//     isNewRecord: false,
+//     _schema: null,
+//     _schemaDelimiter: '',
+//     raw: true,
+//     attributes: [
+//       'id',
+//       'session',
+//       'data',
+//       'createdAt',
+//       'updatedAt',
+//       'deletedAt',
+//       'UserId'
+//     ]
+//   },
+//   isNewRecord: false
+// }
