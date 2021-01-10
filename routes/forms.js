@@ -17,15 +17,39 @@ router.post('/upload', async (req, res) => {
 });
 
 router.get('/view', async (req, res) => {
-  const forms = await Form.findAll({ where: { userId: req.user.id } });
+  const forms = await Form.findAll({
+    where: { userId: req.user.id },
+    order: [['createdAt', 'DESC']],
+  });
   // console.log(forms);
-  const headers = forms.map((form) => form.data[0]);
-  return res.json({ forms });
+  const headers = forms.map((form) => {
+    const createdAt = new Date(form.createdAt);
+    const date =
+      createdAt.getFullYear() +
+      '.' +
+      (createdAt.getMonth() + 1) +
+      '.' +
+      createdAt.getDate();
+    const timestmap =
+      cratedAt.getHours() +
+      ':' +
+      cratedAt.getMinutes() +
+      ':' +
+      cratedAt.getSeconds();
+    console.log(date, timestmap);
+    // return {
+    //   id: form.id,
+    //   data: form.data[0],
+    //   date,
+    //   timestmap,
+    // };
+  });
+  // return res.json({ headers });
 });
 
 router.get('/view/:id', async (req, res) => {
   const form = await Form.findOne({ where: { id: req.params.id } });
-  // console.log(form);
+  console.log(form);
   return res.json({ form });
 });
 
