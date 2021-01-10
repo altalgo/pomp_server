@@ -16,7 +16,7 @@ module.exports = () => {
         try {
           const exUser = await User.findOne({ where: { email } });
           if (exUser) {
-            if(exUser.provider == 'local'){
+            if(exUser.provider === 'local'){
               const result = await bcrypt.compare(password, exUser.password);
               if (result) {
                 done(null, exUser);

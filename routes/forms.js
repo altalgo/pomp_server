@@ -23,7 +23,7 @@ router.get('/view', async (req, res) => {
   });
   // console.log(forms);
   const headers = forms.map((form) => {
-    const createdAt = form.createdAt;
+    const createdAt = form.createdAt.toISOString();
     // const date =
     //   createdAt.getFullYear() +
     //   '.' +
@@ -36,14 +36,15 @@ router.get('/view', async (req, res) => {
     //   cratedAt.getMinutes() +
     //   ':' +
     //   cratedAt.getSeconds();
+    // console.log(createdAt)
     const date = createdAt.split('T')[0];
     const timestamp = createdAt.split('T')[1].split('.')[0];
-    console.log(date, timestamp);
+    // 제잘못인가요crated?
     return {
       id: form.id,
       data: form.data[0],
       date,
-      timestmap,
+      timestamp,
     };
   });
   return res.json({ headers });
