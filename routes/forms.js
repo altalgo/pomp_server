@@ -23,28 +23,30 @@ router.get('/view', async (req, res) => {
   });
   // console.log(forms);
   const headers = forms.map((form) => {
-    const createdAt = new Date(form.createdAt);
-    const date =
-      createdAt.getFullYear() +
-      '.' +
-      (createdAt.getMonth() + 1) +
-      '.' +
-      createdAt.getDate();
-    const timestmap =
-      cratedAt.getHours() +
-      ':' +
-      cratedAt.getMinutes() +
-      ':' +
-      cratedAt.getSeconds();
-    console.log(date, timestmap);
-    // return {
-    //   id: form.id,
-    //   data: form.data[0],
-    //   date,
-    //   timestmap,
-    // };
+    const createdAt = form.createdAt;
+    // const date =
+    //   createdAt.getFullYear() +
+    //   '.' +
+    //   (createdAt.getMonth() + 1) +
+    //   '.' +
+    //   createdAt.getDate();
+    // const timestmap =
+    //   cratedAt.getHours() +
+    //   ':' +
+    //   cratedAt.getMinutes() +
+    //   ':' +
+    //   cratedAt.getSeconds();
+    const date = createdAt.split('T')[0];
+    const timestamp = createdAt.split('T')[1].split('.')[0];
+    console.log(date, timestamp);
+    return {
+      id: form.id,
+      data: form.data[0],
+      date,
+      timestmap,
+    };
   });
-  // return res.json({ headers });
+  return res.json({ headers });
 });
 
 router.get('/view/:id', async (req, res) => {
