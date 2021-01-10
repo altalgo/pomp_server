@@ -2,6 +2,7 @@ const Sequelize = require('sequelize');
 const env = process.env.NODE_ENV || 'development';
 const config = require('../config/config')[env];
 const User = require('./user');
+const Form = require('./form');
 
 const db = {};
 const sequelize = new Sequelize(
@@ -13,8 +14,12 @@ const sequelize = new Sequelize(
 
 db.sequelize = sequelize;
 db.User = User;
+db.Form = Form;
 
 User.init(sequelize);
+Form.init(sequelize);
+
 User.associate(db);
+Form.associate(db);
 
 module.exports = db;

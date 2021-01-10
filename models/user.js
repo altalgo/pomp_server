@@ -43,6 +43,6 @@ module.exports = class User extends (
   }
 
   static associate(db) {
-    // db.User.hasMany(db.Form);
+    db.User.hasMany(db.Form);
   }
 };
