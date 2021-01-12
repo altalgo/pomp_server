@@ -3,18 +3,18 @@ const Form = require('../models/form');
 
 const router = express.Router();
 
-router.post('/upload', async (req, res) => {
-  console.log(req.user);
-  const { session, data } = req.body;
-  try {
-    await Form.create({
-      session,
-      data,
-    });
-  } catch (err) {
-    console.log(err);
-  }
-});
+// router.post('/upload', async (req, res) => {
+//   console.log(req.user);
+//   const { session, data } = req.body;
+//   try {
+//     await Form.create({
+//       session,
+//       data,
+//     });
+//   } catch (err) {
+//     console.log(err);
+//   }
+// });
 
 router.get('/view', async (req, res) => {
   // if (!req.user) return res.end('bad request')

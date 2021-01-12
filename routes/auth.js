@@ -171,7 +171,7 @@ router.get(
      function (res) { 
        console.log(res);
       });
-      window.close();
+    window.close();
       </script>`);
   }
 );
