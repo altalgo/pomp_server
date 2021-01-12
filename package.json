@@ -27,6 +27,7 @@
     "express": "^4.17.1",
     "express-session": "^1.17.1",
     "express-session-sequelize": "^2.3.0",
+    "fs": "0.0.1-security",
     "morgan": "^1.10.0",
     "mysql2": "^2.2.5",
     "nunjucks": "^3.2.2",
@@ -35,7 +36,8 @@
     "passport-kakao": "^1.0.0",
     "passport-local": "^1.0.0",
     "sequelize": "^6.3.5",
-    "sequelize-cli": "^6.2.0"
+    "sequelize-cli": "^6.2.0",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "nodemon": "^2.0.6"

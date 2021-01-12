@@ -5,12 +5,12 @@ const { v4: uuidv4 } = require('uuid');
 const User = require('../models/user');
 
 module.exports = () => {
-  passport.use(
+  passport.use('extGoogle',
     new GoogleStrategy(
       {
         clientID: process.env.GOOGLE_ID,
         clientSecret: process.env.GOOGLE_SECRET,
-        callbackURL: 'https://pompserver.leed.at/api/auth/google/callback',
+        callbackURL: 'https://pompserver.leed.at/api/auth/extgoogle/callback',
       },
       async (accessToken, refreshToken, profile, cb) => {
         // console.log('google profile', profile);

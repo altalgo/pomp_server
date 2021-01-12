@@ -5,11 +5,11 @@ const { v4: uuidv4 } = require('uuid');
 const User = require('../models/user');
 
 module.exports = () => {
-  passport.use(
+  passport.use('extKakao',
     new KakaoStrategy(
       {
         clientID: process.env.KAKAO_ID,
-        callbackURL: 'https://pompserver.leed.at/api/auth/kakao/callback',
+        callbackURL: 'https://pompserver.leed.at/api/auth/extkakao/callback',
       },
       async (accessToken, refreshToken, profile, done) => {
         // console.log('kakao profile', profile);

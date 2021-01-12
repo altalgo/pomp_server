@@ -3,6 +3,7 @@ const passport = require('passport');
 const bcrypt = require('bcrypt');
 const { isLoggedIn, isNotLoggedIn } = require('./middlewares');
 const User = require('../models/user');
+const { v4: uuidv4 } = require('uuid');
 
 const router = express.Router();
 
@@ -14,10 +15,12 @@ router.post('/join', isNotLoggedIn, async (req, res, next) => {
       return res.json({ error: '해당 유저가 이미 존재합니다' });
     }
     const hash = await bcrypt.hash(password, 12);
+    const userUUID = uuidv4();
     await User.create({
       email,
       nick,
       password: hash,
+      userUUID,
     });
     return res.json({ joinSuccess: true });
   } catch (error) {
@@ -27,6 +30,7 @@ router.post('/join', isNotLoggedIn, async (req, res, next) => {
 });
 
 router.post('/login', isNotLoggedIn, (req, res, next) => {
+  console.log(req.body);
   passport.authenticate(
     'local',
     {
@@ -74,7 +78,7 @@ router.get('/logout', isLoggedIn, (req, res) => {
 router.get('/user', (req, res) => {
   // console.log(req.user);
   if (req.user) {
-    return res.json({ username: req.user.nick, isAuth: true });
+    return res.json({ username: req.user.nick, isAuth: true, user: req.user.userUUID });
   }
   return res.json({ isAuth: false });
 });
@@ -88,8 +92,87 @@ router.get(
   (req, res) => {
     // return res.redirect('/forms');
     return res.send(
-      '<script>window.location.href="http://localhost:3000/forms";</script>'
+      '<script>window.location.href="http://pomp.leed.at/forms";</script>'
     );
+  }
+);
+router.post('/extlogin', isNotLoggedIn, (req, res, next) => {
+  console.log(req.body);
+  passport.authenticate(
+    'extLocal',
+    {
+      badRequestMessage: '로그인 정보를 입력해주세요',
+    },
+    (authError, user, info) => {
+
+      if (authError) {
+        console.error(authError);
+        return next(authError);
+      }
+      if (!user) {
+        return res.json({
+          loginSuccess: false,
+          error: info.message,
+        });
+      }
+      return req.login(user, (loginError) => {
+        if (loginError) {
+          console.error(loginError);
+          return next(loginError);
+        } else {
+          // 세션 쿠키를 브라우저로 보낸다.
+          req.session.save((err) => {
+            if (err) {
+              console.log(err);
+            }
+            return res.json({
+              loginSuccess: true,
+              uuid: req.user.userUUID
+            });
+          });
+        }
+      });
+    }
+  )(req, res, next); // 미들웨어 내의 미들웨어에는 (req, res, next)를 붙입니다.
+});
+router.get('/extkakao', passport.authenticate('extKakao'));
+router.get(
+  '/extkakao/callback',
+  passport.authenticate('extKakao', {
+    failureRedirect: '/',
+  }),
+  (req, res) => {
+    // return res.redirect('/forms');
+    return res.send(`<script>
+    chrome.runtime.sendMessage("ipffhgmabaaegdgiahgkmlifdgnlehla",
+    { msg: "loginedKakao", uuid: "`+ req.user.userUUID + `" },
+     function (res) { 
+       console.log(res);
+      });
+      window.close();
+      </script>`);
+  }
+);
+router.get(
+  '/extgoogle',
+  passport.authenticate('extGoogle', { scope: ['profile', 'email'] })
+);
+router.get(
+  '/extgoogle/callback',
+  passport.authenticate('extGoogle', {
+    // failureRedirect: '/',
+  }),
+  (req, res) => {
+    console.log('req.user, before sending cookie', req.user.userUUID);
+    // return res.redirect('http://pomp.leed.at/forms');
+    return res.send(`<script>
+    chrome.runtime.sendMessage("ipffhgmabaaegdgiahgkmlifdgnlehla",
+    { msg: "loginedGoogle", uuid: "`+ req.user.userUUID + `" },
+     function (res) { 
+       console.log(res);
+      });
+      window.close();
+      </script>`);
   }
 );
 router.get(
@@ -99,12 +182,13 @@ router.get(
 router.get(
   '/google/callback',
   passport.authenticate('google', {
-    failureRedirect: '/',
+    // failureRedirect: '/',
   }),
   (req, res) => {
-    // return res.redirect('/forms');
+    console.log('req.user, before sending cookie', req.user);
+    // return res.redirect('http://pomp.leed.at/forms');
     return res.send(
-      '<script>window.location.href="http://localhost:3000/forms";</script>'
+      '<script>window.location.href="http://pomp.leed.at/forms";</script>'
     );
   }
 );

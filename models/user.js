@@ -19,6 +19,10 @@ module.exports = class User extends (
           type: Sequelize.STRING(100),
           allowNull: true,
         },
+        userUUID: {
+          type: Sequelize.UUIDV4(),
+          allowNull: true,
+        },
         snsId: {
           type: Sequelize.STRING(40),
           allowNull: true,

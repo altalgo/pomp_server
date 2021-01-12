@@ -41,17 +41,20 @@ nunjucks.configure('views', {
 const sessionStore = new SequelizeStore({
   db: sequelize,
 });
-sessionStore.sync({ force: true });
+sessionStore.sync({ force: false });
 
 app.use(morgan('dev'));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser(process.env.COOKIE_SECRET));
+// https://stackoverflow.com/questions/10476872/setting-a-cookie-for-two-domains
 app.use(
   session({
     secret: process.env.COOKIE_SECRET,
     cookie: {
+      domain:'.leed.at',
+      path: '/',
       httpOnly: true,
       secure: false,
     },
