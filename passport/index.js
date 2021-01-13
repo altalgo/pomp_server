@@ -22,7 +22,7 @@ module.exports = () => {
       where: { id },
     })
       .then((user) => {
-        console.log('user', user);
+        console.log('user', user.email);
         done(null, user)
       }) // req.user, req.isAuthenticated()
       .catch((err) => done(err));

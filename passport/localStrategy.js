@@ -5,7 +5,7 @@ const bcrypt = require('bcrypt');
 const User = require('../models/user');
 
 module.exports = () => {
-  passport.use(
+  passport.use('local',
     new LocalStrategy(
       {
         usernameField: 'email', // req.body.email
