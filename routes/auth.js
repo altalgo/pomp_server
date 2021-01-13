@@ -75,6 +75,12 @@ router.get('/logout', (req, res) => {
   });
 });
 
+router.get('/chkiflogined', isNotLoggedIn, (req, res) => {
+  return res.json({
+    message: 'not logged in'
+  });
+})
+
 router.get('/user', (req, res) => {
   // console.log(req.user);
   if (req.user) {
@@ -102,7 +108,7 @@ router.post('/extlogin', isNotLoggedIn, (req, res, next) => {
     'extLocal',
     {
       badRequestMessage: '로그인 정보를 입력해주세요',
-    }, 
+    },
     (authError, user, info) => {
       if (authError) {
         console.log('authError')
@@ -138,7 +144,9 @@ router.post('/extlogin', isNotLoggedIn, (req, res, next) => {
     }
   )(req, res, next); // 미들웨어 내의 미들웨어에는 (req, res, next)를 붙입니다.
 });
-router.get('/extkakao', passport.authenticate('extKakao'));
+
+router.get('/extkakao', isNotLoggedIn, passport.authenticate('extKakao'));
+
 router.get(
   '/extkakao/callback',
   passport.authenticate('extKakao', {
@@ -156,10 +164,13 @@ router.get(
       </script>`);
   }
 );
+
 router.get(
   '/extgoogle',
+  isNotLoggedIn,
   passport.authenticate('extGoogle', { scope: ['profile', 'email'] })
 );
+
 router.get(
   '/extgoogle/callback',
   passport.authenticate('extGoogle', {
@@ -178,6 +189,7 @@ router.get(
       </script>`);
   }
 );
+
 router.get(
   '/google',
   passport.authenticate('google', { scope: ['profile', 'email'] })
