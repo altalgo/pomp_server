@@ -11,7 +11,7 @@ exports.isNotLoggedIn = (req, res, next) => {
     next();
   } else {
     res.json({
-      message: '로그인 한 상태입니다',
+      message: '로그인 상태입니다',
       uuid: req.user.userUUID
     });
   }
