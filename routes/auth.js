@@ -1,6 +1,6 @@
 const express = require('express');
 const passport = require('passport');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const { isLoggedIn, isNotLoggedIn } = require('./middlewares');
 const User = require('../models/user');
 const { v4: uuidv4 } = require('uuid');
@@ -155,7 +155,7 @@ router.get(
   (req, res) => {
     // return res.redirect('/forms');
     return res.send(`<script>
-    chrome.runtime.sendMessage("olhikehcbmkheggemandfhjekkbffiki",
+    chrome.runtime.sendMessage("gmajhmdbmhadglgnommlpinilbaenalb",
     { msg: "loginedKakao", uuid: "`+ req.user.userUUID + `" },
      function (res) { 
        console.log(res);
@@ -180,7 +180,7 @@ router.get(
     console.log('req.user, before sending cookie', req.user.userUUID);
     // return res.redirect('http://pomp.leed.at/forms');
     return res.send(`<script>
-    chrome.runtime.sendMessage("olhikehcbmkheggemandfhjekkbffiki",
+    chrome.runtime.sendMessage("gmajhmdbmhadglgnommlpinilbaenalb",
     { msg: "loginedGoogle", uuid: "`+ req.user.userUUID + `" },
      function (res) { 
        console.log(res);
