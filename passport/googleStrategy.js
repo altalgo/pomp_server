@@ -22,6 +22,14 @@ module.exports = () => {
             console.log('user exists');
             cb(null, exUser);
           } else {
+            const sameEmailUser = await User.findOne({
+              where: { email: profile._json.email },
+            });
+            if (sameEmailUser) {
+              sameEmailUser.setDataValue("duplicate", "yes")
+              // console.log(sameEmailUser)
+              return cb(null, sameEmailUser, { "loginError": true, "message": "Please Login with Method you've joined Pomp" });
+            }
             console.log('no user');
             const userUUID = uuidv4();
             const newUser = await User.create({

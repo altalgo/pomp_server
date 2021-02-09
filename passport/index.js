@@ -11,6 +11,7 @@ module.exports = () => {
   passport.serializeUser((user, done) => {
     console.log('Serialize User');
     done(null, user.id); // 세션에 user의 id만 저장
+    // req.session에 user.id를 저장
   });
 
   passport.deserializeUser((id, done) => {
@@ -24,9 +25,10 @@ module.exports = () => {
       .then((user) => {
         console.log('user', user.email);
         done(null, user)
-      }) // req.user, req.isAuthenticated()
+      })
       .catch((err) => done(err));
   });
+  
   local();
   kakao();
   google();
