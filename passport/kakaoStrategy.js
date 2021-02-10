@@ -24,12 +24,13 @@ module.exports = () => {
               where: { email: profile._json.kakao_account.email },
             });
             if (sameEmailUser) {
-              // 카카오로 가입하진 않았지만 local or 구글 계정이
-              // 동일한 이메일로 존재해서 그냥 로그인 시켜줌
-              // console.log("BEFORE CALLBACK")
-              sameEmailUser.setDataValue("duplicate", "yes")
+              // 카카오로 가입하진 않았지만 local or 구글 계정이 동일한 이메일로 존재하는 경우 처리
+              sameEmailUser.setDataValue('duplicate', 'yes');
               // console.log(sameEmailUser)
-              return done(null, sameEmailUser, {"loginError": true ,"message": "Please Login with Method you've joined Pomp" });
+              return done(null, sameEmailUser, {
+                loginError: true,
+                message: "Please Login with Method you've joined Pomp",
+              });
             }
             const userUUID = uuidv4();
             const newUser = await User.create({

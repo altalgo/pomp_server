@@ -77,51 +77,51 @@ router.get('/logout', (req, res) => {
 
 router.get('/chkiflogined', isNotLoggedIn, (req, res) => {
   return res.json({
-    message: 'not logged in'
+    message: 'not logged in',
   });
-})
+});
 
 router.get('/user', (req, res) => {
   console.log(req.user);
   if (req.user) {
-    return res.json({ username: req.user.nick, isAuth: true, user: req.user.userUUID });
+    return res.json({
+      username: req.user.nick,
+      isAuth: true,
+      user: req.user.userUUID,
+    });
   }
   return res.json({ isAuth: false });
 });
 
 router.get('/kakao', passport.authenticate('kakao'));
 
-router.get(
-  '/kakao/callback',
-  function (req, res, next) {
-    passport.authenticate('kakao',
-      function (authError, user, info) {
-        if (authError) {
-          console.error(authError);
-          next(authError);
-        }
-        if (user.dataValues.duplicate) {
-          return res.json(info);
-        }
-        return req.login(user, (loginError) => {
-          if (loginError) {
-            console.error(loginError);
-            return next(loginError);
-          } else {
-            // 세션 쿠키를 브라우저로 보낸다.
-            req.session.save((err) => {
-              if (err) {
-                console.error(err);
-              }
-              return res.send(
-                '<script>window.location.href="http://pomp.leed.at/forms";</script>'
-              );
-            });
+router.get('/kakao/callback', function (req, res, next) {
+  passport.authenticate('kakao', function (authError, user, info) {
+    if (authError) {
+      console.error(authError);
+      next(authError);
+    }
+    if (user.dataValues.duplicate) {
+      return res.json(info);
+    }
+    return req.login(user, (loginError) => {
+      if (loginError) {
+        console.error(loginError);
+        return next(loginError);
+      } else {
+        // 세션 쿠키를 브라우저로 보낸다.
+        req.session.save((err) => {
+          if (err) {
+            console.error(err);
           }
+          return res.send(
+            '<script>window.location.href="http://pomp.leed.at/forms";</script>'
+          );
         });
-      })(req, res, next);
-  }
-);
+      }
+    });
+  })(req, res, next);
+});
 
 router.post('/extlogin', isNotLoggedIn, (req, res, next) => {
   // console.log(req.body);
@@ -132,7 +132,7 @@ router.post('/extlogin', isNotLoggedIn, (req, res, next) => {
     },
     (authError, user, info) => {
       if (authError) {
-        console.log('authError')
+        console.log('authError');
         console.error(authError);
         return next(authError);
       }
@@ -145,19 +145,19 @@ router.post('/extlogin', isNotLoggedIn, (req, res, next) => {
       }
       return req.login(user, (loginError) => {
         if (loginError) {
-          console.log('loginError')
+          console.log('loginError');
           console.error(loginError);
           return next(loginError);
         } else {
           // 세션 쿠키를 브라우저로 보낸다.
           req.session.save((err) => {
             if (err) {
-              console.log('err')
+              console.log('err');
               console.log(err);
             }
             return res.json({
               loginSuccess: true,
-              uuid: req.user.userUUID
+              uuid: req.user.userUUID,
             });
           });
         }
@@ -168,23 +168,42 @@ router.post('/extlogin', isNotLoggedIn, (req, res, next) => {
 
 router.get('/extkakao', isNotLoggedIn, passport.authenticate('extKakao'));
 
-router.get(
-  '/extkakao/callback',
-  passport.authenticate('extKakao', {
-    failureRedirect: '/',
-  }),
-  (req, res) => {
-    // return res.redirect('/forms');
-    return res.send(`<script>
-    chrome.runtime.sendMessage("gmajhmdbmhadglgnommlpinilbaenalb",
-    { msg: "loginedKakao", uuid: "`+ req.user.userUUID + `" },
-     function (res) { 
-       console.log(res);
-      });
-      location.href = "https://pomp.leed.at/extloginsuccess";
-      </script>`);
-  }
-);
+router.get('/extkakao/callback', function (req, res, next) {
+  passport.authenticate('extKakao', function (authError, user, info) {
+    if (authError) {
+      console.error(authError);
+      next(authError);
+    }
+    if (user.dataValues.duplicate) {
+      return res.json(info);
+    }
+    return req.login(user, (loginError) => {
+      if (loginError) {
+        console.error(loginError);
+        return next(loginError);
+      } else {
+        // 세션 쿠키를 브라우저로 보낸다.
+        req.session.save((err) => {
+          if (err) {
+            console.error(err);
+          }
+          return res.send(
+            `<script>
+            chrome.runtime.sendMessage("gmajhmdbmhadglgnommlpinilbaenalb",
+            { msg: "loginedKakao", uuid: "` +
+              req.user.userUUID +
+              `" },
+             function (res) { 
+               console.log(res);
+              });
+              location.href = "https://pomp.leed.at/extloginsuccess";
+              </script>`
+          );
+        });
+      }
+    });
+  })(req, res, next);
+});
 
 router.get(
   '/extgoogle',
@@ -192,61 +211,74 @@ router.get(
   passport.authenticate('extGoogle', { scope: ['profile', 'email'] })
 );
 
-router.get(
-  '/extgoogle/callback',
-  passport.authenticate('extGoogle', {
-    // failureRedirect: '/',
-  }),
-  (req, res) => {
-    console.log('req.user, before sending cookie', req.user.userUUID);
-    // return res.redirect('http://pomp.leed.at/forms');
-    return res.send(`<script>
-    chrome.runtime.sendMessage("gmajhmdbmhadglgnommlpinilbaenalb",
-    { msg: "loginedGoogle", uuid: "`+ req.user.userUUID + `" },
-     function (res) { 
-       console.log(res);
-      });
-      location.href = "https://pomp.leed.at/extloginsuccess";
-      </script>`);
-  }
-);
+router.get('/extgoogle/callback', function (req, res, next) {
+  passport.authenticate('extGoogle', function () {
+    if (authError) {
+      console.error(authError);
+      next(authError);
+    }
+    if (user.dataValues.duplicate) {
+      return res.json(info);
+    }
+    return req.login(user, (loginError) => {
+      if (loginError) {
+        console.error(loginError);
+        return next(loginError);
+      } else {
+        // 세션 쿠키를 브라우저로 보낸다.
+        req.session.save((err) => {
+          if (err) {
+            console.error(err);
+          }
+          return res.send(
+            `<script>
+          chrome.runtime.sendMessage("gmajhmdbmhadglgnommlpinilbaenalb",
+          { msg: "loginedGoogle", uuid: "` +
+              req.user.userUUID +
+              `" },
+           function (res) { 
+             console.log(res);
+            });
+            location.href = "https://pomp.leed.at/extloginsuccess";
+            </script>`
+          );
+        });
+      }
+    });
+  })(req, res, next);
+});
 
 router.get(
   '/google',
   passport.authenticate('google', { scope: ['profile', 'email'] })
 );
-router.get(
-  '/google/callback'
-  ,
-  function (req, res, next) {
-    passport.authenticate('google',
-      function (authError, user, info) {
-        if (authError) {
-          console.error(authError);
-          next(authError);
-        }
-        if (user.dataValues.duplicate) {
-          return res.json(info);
-        }
-        return req.login(user, (loginError) => {
-          if (loginError) {
-            console.error(loginError);
-            return next(loginError);
-          } else {
-            // 세션 쿠키를 브라우저로 보낸다.
-            req.session.save((err) => {
-              if (err) {
-                console.error(err);
-              }
-              return res.send(
-                '<script>window.location.href="http://pomp.leed.at/forms";</script>'
-              );
-            });
+router.get('/google/callback', function (req, res, next) {
+  passport.authenticate('google', function (authError, user, info) {
+    if (authError) {
+      console.error(authError);
+      next(authError);
+    }
+    if (user.dataValues.duplicate) {
+      return res.json(info);
+    }
+    return req.login(user, (loginError) => {
+      if (loginError) {
+        console.error(loginError);
+        return next(loginError);
+      } else {
+        // 세션 쿠키를 브라우저로 보낸다.
+        req.session.save((err) => {
+          if (err) {
+            console.error(err);
           }
+          return res.send(
+            '<script>window.location.href="http://pomp.leed.at/forms";</script>'
+          );
         });
-      })(req, res, next);
-  }
-);
+      }
+    });
+  })(req, res, next);
+});
 
 router.post('/emailcheck', async (req, res) => {
   const { email } = req.body;
