@@ -4,13 +4,11 @@ const cookieParser = require('cookie-parser');
 const morgan = require('morgan');
 const path = require('path');
 const session = require('express-session');
-const nunjucks = require('nunjucks');
 const dotenv = require('dotenv');
 const passport = require('passport');
 const SequelizeStore = require('connect-session-sequelize')(session.Store);
 
 dotenv.config();
-// const pageRouter = require('./routes/page');
 const authRouter = require('./routes/auth');
 const formRouter = require('./routes/forms');
 const { sequelize } = require('./models');
@@ -20,13 +18,6 @@ const app = express();
 app.use(cors());
 passportConfig(); // 패스포트 설정
 app.set('port', process.env.PORT || 8080);
-
-// 프론트는 넌적스 활용
-app.set('view engine', 'njk');
-nunjucks.configure('views', {
-  express: app,
-  watch: true,
-});
 
 //시퀄라이즈 연결
 // sequelize
@@ -43,7 +34,12 @@ const sessionStore = new SequelizeStore({
 });
 sessionStore.sync({ force: false });
 
-app.use(morgan('dev'));
+if (process.env.NODE_ENV === 'production') {
+  app.use(morgan('combined')); // 배포용
+} else {
+  app.use(morgan('dev')); // 개발용
+}
+
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -53,7 +49,7 @@ app.use(
   session({
     secret: process.env.COOKIE_SECRET,
     cookie: {
-      domain:'.leed.at',
+      domain: '.leed.at',
       path: '/',
       httpOnly: true,
       secure: false,
@@ -76,10 +72,9 @@ app.use((req, res, next) => {
 });
 
 app.use((err, req, res, next) => {
-  res.locals.message = err.message;
-  res.locals.error = process.env.NODE_ENV !== 'production' ? err : {};
+  // 에러 처리를 어떻게 할 것인지 논의 필요
   res.status(err.status || 500);
-  res.render('error');
+  console.error(err);
 });
 
 app.listen(app.get('port'), () => {

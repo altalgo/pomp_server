@@ -4,7 +4,7 @@
   "description": "Backend server of pomp",
   "main": "app.js",
   "scripts": {
-    "start": "node app.js",
+    "start": "cross-env NODE_ENV=production node app.js",
     "dev": "concurrently \"npm run start\" \"cd ../client && npm run start\""
   },
   "repository": {
@@ -23,14 +23,13 @@
     "connect-session-sequelize": "^7.0.4",
     "cookie-parser": "^1.4.5",
     "cors": "^2.8.5",
+    "cross-env": "^7.0.3",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "express-session": "^1.17.1",
     "express-session-sequelize": "^2.3.0",
-    "fs": "0.0.1-security",
     "morgan": "^1.10.0",
     "mysql2": "^2.2.5",
-    "nunjucks": "^3.2.2",
     "passport": "^0.4.1",
     "passport-google-oauth20": "^2.0.0",
     "passport-kakao": "^1.0.0",

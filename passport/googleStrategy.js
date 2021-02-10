@@ -13,7 +13,6 @@ module.exports = () => {
         callbackURL: 'https://pompserver.leed.at/api/auth/google/callback',
       },
       async (accessToken, refreshToken, profile, cb) => {
-        // console.log('google profile', profile);
         try {
           const exUser = await User.findOne({
             where: { snsId: profile.id, provider: 'google' },
@@ -26,11 +25,12 @@ module.exports = () => {
               where: { email: profile._json.email },
             });
             if (sameEmailUser) {
-              sameEmailUser.setDataValue("duplicate", "yes")
-              // console.log(sameEmailUser)
-              return cb(null, sameEmailUser, { "loginError": true, "message": "Please Login with Method you've joined Pomp" });
+              sameEmailUser.setDataValue('duplicate', 'yes');
+              return cb(null, sameEmailUser, {
+                loginError: true,
+                message: "Please Login with Method you've joined Pomp",
+              });
             }
-            console.log('no user');
             const userUUID = uuidv4();
             const newUser = await User.create({
               email: profile._json.email,
