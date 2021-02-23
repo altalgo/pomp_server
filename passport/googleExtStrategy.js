@@ -11,7 +11,7 @@ module.exports = () => {
       {
         clientID: process.env.GOOGLE_ID,
         clientSecret: process.env.GOOGLE_SECRET,
-        callbackURL: 'https://pompserver.leed.at/api/auth/extgoogle/callback',
+        callbackURL: 'https://pomp.leed.at/api/auth/extgoogle/callback',
       },
       async (accessToken, refreshToken, profile, cb) => {
         try {

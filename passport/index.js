@@ -1,10 +1,10 @@
 const passport = require('passport');
 const local = require('./localStrategy');
 const kakao = require('./kakaoStrategy');
-const google = require('./googleStrategy')
-const extGoogle = require('./googleExtStrategy')
-const extKakao = require('./kakaoExtStrategy')
-const extLocal = require('./localExtStrategy')
+const google = require('./googleStrategy');
+const extGoogle = require('./googleExtStrategy');
+const extKakao = require('./kakaoExtStrategy');
+const extLocal = require('./localExtStrategy');
 const User = require('../models/user');
 
 module.exports = () => {
@@ -16,7 +16,7 @@ module.exports = () => {
 
   passport.deserializeUser((id, done) => {
     console.log('Deserialize User');
-    if(!id){
+    if (!id) {
       console.log('no session cookie');
     }
     User.findOne({
@@ -24,11 +24,11 @@ module.exports = () => {
     })
       .then((user) => {
         console.log('user', user.email);
-        done(null, user)
+        done(null, user);
       })
       .catch((err) => done(err));
   });
-  
+
   local();
   kakao();
   google();
