@@ -9,7 +9,7 @@ module.exports = () => {
     new KakaoStrategy(
       {
         clientID: process.env.KAKAO_ID,
-        callbackURL: 'https://pompserver.leed.at/api/auth/kakao/callback',
+        callbackURL: 'https://pomp.leed.at/api/auth/kakao/callback',
       },
       async (accessToken, refreshToken, profile, done) => {
         // console.log('kakao profile', profile);
